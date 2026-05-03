@@ -15,20 +15,22 @@ audio_bytes = audio_recorder(
 
 if audio_bytes:
     with st.spinner("جاري معالجة صوتك..."):
-        # 2. إرسال الصوت فوراً للـ Webhook بتاعك في n8n
-        # استخدم الـ Production URL اللي في صورة n8n
-        WEBHOOK_URL = (
-            "https://client1.tashghil.pro/webhook/9ffef3de-a05a-4120-8e44-37c053ce392d"
-        )
-
-        files = {"file": ("query.wav", audio_bytes, "audio/wav")}
-        response = requests.post(WEBHOOK_URL, files=files)
-
-        if response.status_code == 200:
-            res = response.json()
-            st.success("تم الرد!")
-            # 3. عرض النص وتشغيل الرد الصوتي
-            st.write(f"**الرد:** {res.get('output_text')}")
-            st.audio(res.get("audio_url"))
-        else:
-            st.error("فشل الاتصال بالسيستم، تأكد من تشغيل الـ Workflow")
+        WEBHOOK_URL = "https://client1.tashghil.pro/webhook/9ffef3de-a05a-4120-8e44-37c053ce392d"
+        
+        # تعديل: نبعت الـ bytes مباشرة مع تحديد اسم الملف
+        files = {'file': ('audio.wav', audio_bytes, 'audio/wav')}
+        
+        try:
+            response = requests.post(WEBHOOK_URL, files=files, timeout=30)
+            if response.status_code == 200:
+                # تأكد إن n8n بيرجع JSON فيه مفتاح اسمه output_text
+                res = response.json()
+                st.success("تم الرد!")
+                if 'output_text' in res:
+                    st.write(f"**الرد:** {res['output_text']}")
+                if 'audio_url' in res:
+                    st.audio(res['audio_url'])
+            else:
+                st.error(f"خطأ من السيرفر: {response.status_code}")
+        except Exception as e:
+            st.error(f"فشل الاتصال: {e}")
