@@ -15,7 +15,7 @@ audio_bytes = audio_recorder(
 
 if audio_bytes:
     with st.spinner("جاري معالجة صوتك..."):
-        WEBHOOK_URL = "https://client1.tashghil.pro/webhook/9ffef3de-a05a-4120-8e44-37c053ce392d"
+        WEBHOOK_URL = "https://client1.tashghil.pro/webhook-test/9ffef3de-a05a-4120-8e44-37c053ce392d"
         
         # تعديل: نبعت الـ bytes مباشرة مع تحديد اسم الملف
         files = {'file': ('audio.wav', audio_bytes, 'audio/wav')}
